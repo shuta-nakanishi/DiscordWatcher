@@ -1,3 +1,4 @@
+# テストコミット: jas_devブランチ作成
 import discord
 
 from config import Config
