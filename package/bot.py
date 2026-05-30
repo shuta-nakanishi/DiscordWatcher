@@ -6,6 +6,7 @@ from repository import (
     S3Repository
 )
 
+# リポジトリを作成するファクトリ関数
 def create_repository():
 
     if Config.STATUS_STORAGE == "s3":
@@ -19,9 +20,7 @@ def create_repository():
         "last_status.json"
     )
 
-
-repository = create_repository()
-
+# 環境変数から必要な設定を読み込む
 TOKEN = Config.DISCORD_TOKEN
 TARGET_USER_ID = Config.TARGET_USER_ID
 NOTIFY_CHANNEL_ID = Config.NOTIFY_CHANNEL_ID
@@ -119,5 +118,8 @@ async def on_ready():
 
         await client.close()
 
-# クライアントを実行する
-client.run(TOKEN)
+if __name__ == "__main__":
+    # リポジトリを作成
+    repository = create_repository()
+    # クライアントを実行
+    client.run(TOKEN)
