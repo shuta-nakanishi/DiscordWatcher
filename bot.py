@@ -6,6 +6,7 @@ from repository import (
     S3Repository
 )
 
+# リポジトリを作成するファクトリ関数
 def create_repository():
 
     if Config.STATUS_STORAGE == "s3":
@@ -19,9 +20,7 @@ def create_repository():
         "last_status.json"
     )
 
-
-repository = create_repository()
-
+# 環境変数から必要な設定を読み込む
 TOKEN = Config.DISCORD_TOKEN
 TARGET_USER_ID = Config.TARGET_USER_ID
 NOTIFY_CHANNEL_ID = Config.NOTIFY_CHANNEL_ID
@@ -118,6 +117,22 @@ async def on_ready():
     finally:
 
         await client.close()
+        
+# Lambdaが実行されたときに呼び出される関数
+def lambda_handler(event, context):
+    global repository
+    
+    # リポジトリを作成
+    repository = create_repository()
+    
+    # クライアントを実行（非同期処理を開始）
+    client.run(TOKEN)
+    
+    return {
+        'statusCode': 200,
+        'body': 'Discord status check completed.'
+    }
 
-# クライアントを実行する
-client.run(TOKEN)
+
+if __name__ == "__main__":
+    lambda_handler(None, None)
